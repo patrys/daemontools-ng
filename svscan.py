@@ -103,7 +103,7 @@ class Service(dbus.service.Object):
             self.kill(signal.SIGCONT)
         return True
 
-    @dbus.service.signal(dbus_interface = 'eu.itsltd.Supervisor.Service', signature = 's')
+    @dbus.service.signal(dbus_interface = 'com.github.patrys.Supervisor.Service', signature = 's')
     def changed(self, status):
         self.announce()
 
@@ -140,7 +140,7 @@ class Service(dbus.service.Object):
         self.respawn = respawn
         self.announce()
 
-    @dbus.service.method(dbus_interface = 'eu.itsltd.Supervisor.Service', in_signature = 'u')
+    @dbus.service.method(dbus_interface = 'com.github.patrys.Supervisor.Service', in_signature = 'u')
     def kill(self, sig):
         '''
         Send a signal
@@ -154,7 +154,7 @@ class Service(dbus.service.Object):
                 self.changed('up')
             os.kill(self.pid, sig)
 
-    @dbus.service.method(dbus_interface = 'eu.itsltd.Supervisor.Service', out_signature = 'uusb')
+    @dbus.service.method(dbus_interface = 'com.github.patrys.Supervisor.Service', out_signature = 'uusb')
     def status(self):
         '''
         Return status info
@@ -203,7 +203,7 @@ class Supervisor(dbus.service.Object):
     busName = None
 
     def __init__(self, directory = '/service', maxServices = 1000):
-        self.busName = dbus.service.BusName('eu.itsltd.Supervisor', bus = dbus.SessionBus())
+        self.busName = dbus.service.BusName('com.github.patrys.Supervisor', bus = dbus.SessionBus())
         super(Supervisor, self).__init__(self.busName, '/Manager')
         self.directory = directory
         self.maxServices = maxServices
@@ -242,7 +242,7 @@ class Supervisor(dbus.service.Object):
             service = Service(path, self, name)
             self.services[path] = service
 
-    @dbus.service.method(dbus_interface = 'eu.itsltd.Supervisor', in_signature = 's', out_signature = 's')
+    @dbus.service.method(dbus_interface = 'com.github.patrys.Supervisor', in_signature = 's', out_signature = 's')
     def find(self, path):
         path = os.realpath(path)
         if self.services.has_key(path):
@@ -250,7 +250,7 @@ class Supervisor(dbus.service.Object):
         else:
             return ''
 
-    @dbus.service.method(dbus_interface = 'eu.itsltd.Supervisor', in_signature = '', out_signature = 'as')
+    @dbus.service.method(dbus_interface = 'com.github.patrys.Supervisor', in_signature = '', out_signature = 'as')
     def list(self):
         return ['/Services/' + self.services[path].name for path in self.services.keys()]
 
